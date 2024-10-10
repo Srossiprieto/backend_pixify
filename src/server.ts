@@ -1,11 +1,15 @@
 import app from './app';
-import { config } from './config/env';
+
+import dotenv from 'dotenv';
 import connectDB from './config/db';
+
+dotenv.config();
 
 // Conectar a la base de datos
 connectDB();
 
 // Levantar el servidor
-app.listen(config.port, () => {
-  console.log(`Servidor corriendo en el puerto ${config.port}`);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`API running on port ${port}`);
 });
