@@ -34,7 +34,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
   try {
-    const userFound = await User.findOne({ email });
+    const userFound = await User.findOne({ email }).select("+password");
 
     if (!userFound) {
       res.status(404).json({ message: "User not found" });
@@ -48,6 +48,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     const token = await createAccessToken({ id: userFound._id });
+
     res.cookie("token", token);
     res.status(200).json({
       message: "User logged in successfully",
@@ -60,5 +61,34 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: (err as Error).message });
+  }
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+  res.cookie('token', "", {
+    expires: new Date(0)
+  });
+  res.sendStatus(200);
+}
+
+export const profile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userFound = await User.findById(req.user?.id);
+
+    if (!userFound) {
+      res.status(400).json({ message: "Usuario no encontrado" });
+      return; // Detenemos la ejecución de la función
+    }
+
+    // Enviamos la respuesta con los datos del usuario, sin devolverla
+    res.json({
+      id: userFound._id,
+      username: userFound.username,
+      email: userFound.email,
+      createdAt: userFound.createdAt,
+      updatedAt: userFound.updatedAt,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error del servidor" });
   }
 };
