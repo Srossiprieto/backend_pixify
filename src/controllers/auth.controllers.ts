@@ -3,6 +3,7 @@ import User from "../models/users";
 import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt";
 import jwt from "jsonwebtoken";
+
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
   try {
@@ -22,7 +23,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const userSaved = await user.save();
 
     const token = await createAccessToken({ id: userSaved._id });
-    res.cookie("token", token);
+    res.cookie("token", token, { httpOnly: true, sameSite: 'lax', path: '/' });
     res.status(201).json({
       message: "User created successfully",
       id: userSaved._id,
@@ -55,7 +56,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = await createAccessToken({ id: userFound._id });
 
-    res.cookie("token", token);
+    res.cookie("token", token, { httpOnly: true, sameSite: 'lax', path: '/' });
     res.status(200).json({
       message: "User logged in successfully",
       id: userFound._id,
@@ -83,10 +84,9 @@ export const profile = async (req: Request, res: Response): Promise<void> => {
 
     if (!userFound) {
       res.status(400).json({ message: "Usuario no encontrado" });
-      return; // Detenemos la ejecución de la función
+      return;
     }
 
-    // Enviamos la respuesta con los datos del usuario, sin devolverla
     res.json({
       id: userFound._id,
       username: userFound.username,
