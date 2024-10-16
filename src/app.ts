@@ -10,11 +10,15 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+// Configuración de CORS para habilitar credenciales
+const corsOptions = {
+  credentials: true, // Habilitar el uso de credenciales
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cookieParser());
-
 
 app.get('/', (req, res) => {
   res.send('API is running...');
