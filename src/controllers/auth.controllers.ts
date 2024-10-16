@@ -2,12 +2,11 @@ import { Request, Response } from "express";
 import User from "../models/users";
 import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt";
-
+import jwt from "jsonwebtoken";
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
   try {
-
-   const userFound = await User.findOne({ email });
+    const userFound = await User.findOne({ email });
     if (userFound) {
       res.status(400).json(["Email already exists"]);
       return;
@@ -72,11 +71,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
-  res.cookie('token', "", {
-    expires: new Date(0)
+  res.cookie("token", "", {
+    expires: new Date(0),
   });
   res.sendStatus(200);
-}
+};
 
 export const profile = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -97,5 +96,39 @@ export const profile = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (error) {
     res.status(500).json({ message: "Error del servidor" });
+  }
+};
+
+interface JwtPayload {
+  id: string;
+}
+
+export const verifyToken = async (req: Request, res: Response): Promise<void> => {
+  const { token } = req.cookies;
+
+  if (!token) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    const userFound = await User.findById(decoded.id);
+
+    if (!userFound) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json({
+      message: "User verified successfully",
+      id: userFound._id,
+      username: userFound.username,
+      email: userFound.email,
+      createdAt: userFound.createdAt,
+      updatedAt: userFound.updatedAt,
+    });
+  } catch (err) {
+    res.status(401).json({ message: "Unauthorized" });
   }
 };
