@@ -6,16 +6,16 @@ import categoryRoutes from './routes/category.routes';
 import authRoutes from './routes/auth.routes';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+
 dotenv.config();
 
 const app = express();
+const FRONT_URL = process.env.FRONT_URL;
+app.use(cors({
+  origin: FRONT_URL,  
+  credentials: true
+}));
 
-// Configuración de CORS para habilitar credenciales
-const corsOptions = {
-  credentials: true, // Habilitar el uso de credenciales
-};
-
-app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cookieParser());
