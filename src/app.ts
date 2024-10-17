@@ -6,14 +6,14 @@ import categoryRoutes from './routes/category.routes';
 import authRoutes from './routes/auth.routes';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-
 dotenv.config();
 
 const app = express();
 
+// Configuración de CORS
 app.use(cors({
-  origin: process.env.FRONT_URL, 
-  credentials: true
+  origin: process.env.FRONT_URL, // Usar la variable de entorno FRONT_URL
+  credentials: true, // Habilitar el uso de credenciales
 }));
 app.use(express.json());
 app.use(morgan('dev'));
