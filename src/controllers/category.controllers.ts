@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import Category from "../models/category";
 
-// Obtener todas las categorías
 export const getCategories = async (req: Request, res: Response): Promise<void> => {
   try {
     const categories = await Category.find().populate('products');
@@ -11,7 +10,6 @@ export const getCategories = async (req: Request, res: Response): Promise<void> 
   }
 };
 
-// Obtener categoría por ID
 export const getCategoryById = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
@@ -26,7 +24,6 @@ export const getCategoryById = async (req: Request, res: Response): Promise<void
   }
 };
 
-// Crear una nueva categoría
 export const createCategory = async (req: Request, res: Response): Promise<void> => {
   try {
     const category = new Category(req.body);
@@ -37,7 +34,6 @@ export const createCategory = async (req: Request, res: Response): Promise<void>
   }
 };
 
-// Actualizar una categoría existente
 export const updateCategory = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
@@ -52,7 +48,6 @@ export const updateCategory = async (req: Request, res: Response): Promise<void>
   }
 };
 
-// Eliminar una categoría
 export const deleteCategory = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
