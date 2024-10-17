@@ -23,11 +23,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const userSaved = await user.save();
 
     const token = await createAccessToken({ id: userSaved._id });
+    
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
-      maxAge: 24 * 60 * 60 * 1000, // 1 día
+      maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
     });
     res.status(201).json({
       message: "User created successfully",
@@ -65,8 +66,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
-      maxAge: 24 * 60 * 60 * 1000, // 1 día
+      maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
     });
+    
     res.status(200).json({
       message: "User logged in successfully",
       id: userFound._id,
@@ -84,7 +86,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const logout = async (req: Request, res: Response): Promise<void> => {
   res.cookie("token", "", {
     expires: new Date(0),
-    path: '/',
   });
   res.sendStatus(200);
 };
@@ -112,7 +113,6 @@ export const profile = async (req: Request, res: Response): Promise<void> => {
 
 interface JwtPayload {
   id: string;
-  jwtSecret: string;
 }
 
 export const verifyToken = async (req: Request, res: Response): Promise<void> => {
@@ -123,14 +123,8 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
     return;
   }
 
-  const jwtSecret = process.env.JWT_SECRET;
-
   try {
-    if (!jwtSecret) {
-      res.status(500).json({ message: "JWT secret is not defined" });
-      return;
-    }
-    const decoded = jwt.verify(token, jwtSecret) as unknown as JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
     const userFound = await User.findById(decoded.id);
 
     if (!userFound) {
