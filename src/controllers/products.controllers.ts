@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import Product from "../models/products";
 import Category from "../models/category";
-
-
+import { productSchema } from "../schemas/product.schema";
+import { z } from "zod";
 
 // Obtener todos los productos
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
@@ -32,7 +32,10 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
 // Crear un nuevo producto
 export const createProduct = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, description, price, category, image } = req.body;
+    // Validar los datos de entrada
+    const validatedData = productSchema.parse(req.body);
+
+    const { name, description, price, category, image } = validatedData;
 
     // Verificar si la categoría existe
     const categoryExists = await Category.findById(category);
@@ -42,18 +45,29 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     }
 
     // Crear el producto
-    const product = new Product({ name, description, price, category, image });
-    await product.save();
+    const newProduct = new Product({
+      name,
+      description,
+      price,
+      category,
+      image,
+    });
+    const savedProduct = await newProduct.save();
 
     // Actualizar la categoría para incluir el producto
-    categoryExists.products.push(product._id as any);
+    categoryExists.products.push(savedProduct._id as any);
     await categoryExists.save();
 
-    res.status(201).json(product);
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(201).json(savedProduct);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ errors: error.errors });
+    } else {
+      res.status(500).json({ message: "Internal server error" });
+    }
   }
 };
+
 // Actualizar un producto existente
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
@@ -68,7 +82,6 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 // Eliminar un producto
 export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
