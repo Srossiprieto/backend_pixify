@@ -26,6 +26,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     
     res.cookie("token", token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Solo en producción
       sameSite: 'lax',
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
@@ -64,6 +65,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.cookie("token", token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Solo en producción
       sameSite: 'lax',
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
@@ -86,6 +88,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const logout = async (req: Request, res: Response): Promise<void> => {
   res.cookie("token", "", {
     expires: new Date(0),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Solo en producción
+    sameSite: 'lax',
+    path: '/',
   });
   res.sendStatus(200);
 };

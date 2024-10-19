@@ -1,30 +1,22 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config";
 
-export const authRequired = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
+interface JwtPayload {
+  id: string;
+}
+
+export const authRequired = (req: Request, res: Response, next: NextFunction) => {
   const { token } = req.cookies;
 
   if (!token) {
-    res.status(401).json({ message: "Unauthorized" });
-    return; // Detenemos la ejecución de la función, pero no devolvemos el Response
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET as string) as jwt.JwtPayload;
-
-    // Verificamos si el payload tiene un "id"
-    if (decoded?.id) {
-      req.user = { id: decoded.id };
-      next();
-    } else {
-      res.status(401).json({ message: "Unauthorized" });
-    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    req.user = decoded;
+    next();
   } catch (err) {
-    res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "Unauthorized" });
   }
 };
