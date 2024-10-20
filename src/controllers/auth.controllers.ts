@@ -40,7 +40,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       updatedAt: userSaved.updatedAt,
     });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ message: (err as Error).message });
   }
 };
@@ -80,13 +80,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       updatedAt: userFound.updatedAt,
     });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ message: (err as Error).message });
   }
 };
 
 export const verifyToken = async (req: Request, res: Response): Promise<void> => {
-  console.log("Cookies en la solicitud:", req.cookies);
+  // console.log("Cookies en la solicitud:", req.cookies);
   const { token } = req.cookies;
   if (!token) {
     res.status(401).json({ message: "Unauthorized" });
@@ -109,7 +109,7 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
       updatedAt: userFound.updatedAt,
     });
   } catch (err) {
-    console.error("Error verificando el token:", err);
+    // console.error("Error verificando el token:", err);
     res.status(401).json({ message: "Unauthorized" });
   }
 };
