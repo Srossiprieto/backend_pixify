@@ -5,8 +5,8 @@ import { productSchema } from '../schemas/product.schema';
 import { authRequired } from '../middlewares/validateToken';
 const productRoutes = Router();
 
-productRoutes.get('/',authRequired, getProducts);
-productRoutes.get('/:id',authRequired, getProductById);
+productRoutes.get('/', getProducts);
+productRoutes.get('/:id', getProductById);
 productRoutes.post('/', authRequired, validateSchema(productSchema), createProduct);
 productRoutes.put('/:id', authRequired, validateSchema(productSchema), updateProduct);
 productRoutes.delete('/:id',authRequired, deleteProduct);
