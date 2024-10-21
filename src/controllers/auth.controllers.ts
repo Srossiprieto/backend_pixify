@@ -27,7 +27,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Solo en producción
-      sameSite: 'none',
+      sameSite: 'none', // Ajusta según tus necesidades
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
     });
@@ -40,7 +40,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       updatedAt: userSaved.updatedAt,
     });
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ message: (err as Error).message });
   }
 };
@@ -66,7 +66,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Solo en producción
-      sameSite: 'none',
+      sameSite: 'none', // Ajusta según tus necesidades
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
     });
@@ -80,13 +80,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       updatedAt: userFound.updatedAt,
     });
   } catch (err) {
-    // console.error(err);
+    console.error(err);
     res.status(500).json({ message: (err as Error).message });
   }
 };
 
 export const verifyToken = async (req: Request, res: Response): Promise<void> => {
-  // console.log("Cookies en la solicitud:", req.cookies);
   const { token } = req.cookies;
   if (!token) {
     res.status(401).json({ message: "Unauthorized" });
@@ -109,7 +108,7 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
       updatedAt: userFound.updatedAt,
     });
   } catch (err) {
-    // console.error("Error verificando el token:", err);
+    console.error("Error verificando el token:", err);
     res.status(401).json({ message: "Unauthorized" });
   }
 };
