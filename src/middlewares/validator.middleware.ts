@@ -12,7 +12,7 @@ export const validateSchema = (schema: ZodSchema) => (req: Request, res: Respons
       return;
     }
     // Handle other types of errors if necessary
-   res.status(500).json({ error: 'Internal Server Error' });
-   return ;
+    res.status(500).json({ error: 'Internal Server Error' });
+    return;
   }
 };

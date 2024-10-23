@@ -8,7 +8,7 @@ interface ICategory extends Document {
 
 const categorySchema: Schema = new Schema({
   name: { type: String, required: true },
-  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
+  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: false }]
 
 }, {
   timestamps: true

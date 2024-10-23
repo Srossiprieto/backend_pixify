@@ -3,13 +3,14 @@ import User from "../models/users";
 import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { JWT_SECRET } from "../config";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
   try {
     const userFound = await User.findOne({ email });
     if (userFound) {
-      res.status(400).json(["Email already exists"]);
+      res.status(400).json({ message: "Email already exists" });
       return;
     }
 
@@ -25,7 +26,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const token = await createAccessToken({ id: userSaved._id });
     
     res.cookie("token", token, {
-      httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Solo en producción
       sameSite: 'none', // Ajusta según tus necesidades
       path: '/',
@@ -41,7 +41,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: (err as Error).message });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -51,20 +51,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const userFound = await User.findOne({ email }).select("+password");
 
     if (!userFound) {
-      res.status(404).json({ message: "User not found" });
+      res.status(401).json({ message: "Invalid email or password" });
       return;
     }
 
     const isMatch = await bcrypt.compare(password, userFound.password);
     if (!isMatch) {
-      res.status(401).json({ message: "Invalid Credentials" });
+      res.status(401).json({ message: "Invalid email or password" });
       return;
     }
 
     const token = await createAccessToken({ id: userFound._id });
 
     res.cookie("token", token, {
-      httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Solo en producción
       sameSite: 'none', // Ajusta según tus necesidades
       path: '/',
@@ -81,19 +80,21 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: (err as Error).message });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const verifyToken = async (req: Request, res: Response): Promise<void> => {
   const { token } = req.cookies;
+
   if (!token) {
+    console.error("Token not found in cookies");
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    const decoded = jwt.verify(token, JWT_SECRET as string) as JwtPayload;
     const userFound = await User.findById(decoded.id);
     if (!userFound) {
       res.status(404).json({ message: "User not found" });
@@ -108,7 +109,7 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
       updatedAt: userFound.updatedAt,
     });
   } catch (err) {
-    console.error("Error verificando el token:", err);
+    console.error("Error verifying token:", err);
     res.status(401).json({ message: "Unauthorized" });
   }
 };
