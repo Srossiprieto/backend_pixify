@@ -24,18 +24,18 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const userSaved = await user.save();
 
     const token = await createAccessToken({ id: userSaved._id });
-    
+
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Solo en producción
-      sameSite: 'none', // Ajusta según tus necesidades
-      domain: process.env.COOKIE_DOMAIN || '', // Ajusta según tu dominio
+      secure: process.env.NODE_ENV === 'production', // Only in production
+      sameSite: 'none', // Adjust as needed
+      domain: process.env.COOKIE_DOMAIN || 'localhost', // Adjust as needed
       path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
+      maxAge: 1000 * 60 * 60 * 24 * 7  // Token active for 7 days
     });
     res.status(201).json({
       message: "User created successfully",
-      token, // Asegúrate de incluir el token en la respuesta
+      token, // Ensure the token is included in the response
       user: {
         id: userSaved._id,
         username: userSaved.username,
@@ -70,16 +70,16 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Solo en producción
-      sameSite: 'none', // Ajusta según tus necesidades
-      domain: process.env.COOKIE_DOMAIN, // Ajusta según tu dominio
+      secure: process.env.NODE_ENV === 'production', // Only in production
+      sameSite: 'none', // Adjust as needed
+      domain: process.env.COOKIE_DOMAIN || 'localhost', // Adjust as needed
       path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
+      maxAge: 1000 * 60 * 60 * 24 * 7  // Token active for 7 days
     });
-    
+
     res.status(200).json({
       message: "User logged in successfully",
-      token, // Asegúrate de incluir el token en la respuesta
+      token, // Ensure the token is included in the response
       user: {
         id: userFound._id,
         username: userFound.username,
