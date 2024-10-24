@@ -26,8 +26,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const token = await createAccessToken({ id: userSaved._id });
     
     res.cookie("token", token, {
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Solo en producción
       sameSite: 'none', // Ajusta según tus necesidades
+      domain: process.env.COOKIE_DOMAIN || '', // Ajusta según tu dominio
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
     });
@@ -67,8 +69,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = await createAccessToken({ id: userFound._id });
 
     res.cookie("token", token, {
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Solo en producción
       sameSite: 'none', // Ajusta según tus necesidades
+      domain: process.env.COOKIE_DOMAIN, // Ajusta según tu dominio
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7  // Token activo por 7 días
     });
