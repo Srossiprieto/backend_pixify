@@ -33,11 +33,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
     res.status(201).json({
       message: "User created successfully",
-      id: userSaved._id,
-      username: userSaved.username,
-      email: userSaved.email,
-      createdAt: userSaved.createdAt,
-      updatedAt: userSaved.updatedAt,
+      token, // Asegúrate de incluir el token en la respuesta
+      user: {
+        id: userSaved._id,
+        username: userSaved.username,
+        email: userSaved.email,
+        createdAt: userSaved.createdAt,
+        updatedAt: userSaved.updatedAt,
+      },
     });
   } catch (err) {
     console.error(err);
@@ -72,11 +75,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     
     res.status(200).json({
       message: "User logged in successfully",
-      id: userFound._id,
-      username: userFound.username,
-      email: userFound.email,
-      createdAt: userFound.createdAt,
-      updatedAt: userFound.updatedAt,
+      token, // Asegúrate de incluir el token en la respuesta
+      user: {
+        id: userFound._id,
+        username: userFound.username,
+        email: userFound.email,
+        createdAt: userFound.createdAt,
+        updatedAt: userFound.updatedAt,
+      },
     });
   } catch (err) {
     console.error(err);
