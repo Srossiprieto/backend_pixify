@@ -35,7 +35,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
     res.status(201).json({
       message: "User created successfully",
-      token, // Ensure the token is included in the response
       user: {
         id: userSaved._id,
         username: userSaved.username,
