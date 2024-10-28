@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { JWT_SECRET } from "../config";
 
 // Interfaz para el payload del JWT
 interface CustomJwtPayload extends JwtPayload {
@@ -24,3 +25,5 @@ export const authRequired = (req: Request, res: Response, next: NextFunction): v
     res.status(401).json({ message: "Unauthorized" });
   }
 };
+
+

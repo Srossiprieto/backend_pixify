@@ -26,14 +26,22 @@ export const getCategoryById = async (req: Request, res: Response): Promise<void
 
 export const createCategory = async (req: Request, res: Response): Promise<void> => {
   try {
-    const category = new Category(req.body);
-    await category.save();
-    res.status(201).json(category);
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+    const { name } = req.body;
+
+    if (!name) {
+      res.status(400).json({ message: 'Name is required' });
+      return;
+    }
+
+    const newCategory = new Category({ name });
+    const savedCategory = await newCategory.save();
+
+    res.status(201).json(savedCategory);
+  } catch (error) {
+    console.error("Error creating category:", error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 export const updateCategory = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
