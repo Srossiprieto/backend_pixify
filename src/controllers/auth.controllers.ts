@@ -81,7 +81,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       message: "User logged in successfully",
-      token, // Ensure the token is included in the response
       user: {
         id: userFound._id,
         username: userFound.username,
@@ -106,8 +105,8 @@ export const verifyToken = async (req: Request, res: Response): Promise<void> =>
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET as string) as JwtPayload;
-    const userFound = await User.findById(decoded.id);
+    const user = jwt.verify(token, JWT_SECRET as string) as JwtPayload;
+    const userFound = await User.findById(user.id);
     if (!userFound) {
       res.status(404).json({ message: "User not found" });
       return;
