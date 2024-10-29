@@ -28,8 +28,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // Only in production
-      sameSite: 'none', // Adjust as needed
+      secure: process.env.NODE_ENV === 'production', // Solo en producción
+      sameSite: 'none',
       domain: process.env.COOKIE_DOMAIN || 'localhost', // Adjust as needed
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7  // Token active for 7 days
@@ -71,12 +71,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // Only in production
-      sameSite: 'none', // Adjust as needed
+      secure: process.env.NODE_ENV === 'production', // Solo en producción
+      sameSite: 'none',
       domain: process.env.COOKIE_DOMAIN || 'localhost', // Adjust as needed
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7  // Token active for 7 days
     });
+
 
     res.status(200).json({
       message: "User logged in successfully",
