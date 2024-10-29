@@ -10,12 +10,12 @@ import cookieParser from 'cookie-parser';
 dotenv.config();
 
 const app = express();
-const FRONT_URL = process.env.FRONT_URL;
-app.use(cors({
-  origin: FRONT_URL,  
-  credentials: true
-}));
+const corsOptions = {
+  origin: process.env.FRONT_URL,  // Permitir solo el dominio de tu frontend
+  credentials: true,
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cookieParser());
