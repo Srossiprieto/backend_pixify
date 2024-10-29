@@ -39,8 +39,20 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
   }
 };
 
+interface UserReq {
+  user?: { id: string };
+}
+
 // Crear un nuevo producto
-export const createProduct = async (req: Request, res: Response): Promise<void> => {
+export const createProduct = async (req: Request & UserReq, res: Response): Promise<void> => {
+  const { token } = req.cookies;
+
+  if (!token) {
+    console.error("Token not found in cookies");
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
   try {
     // Validar los datos de entrada
     const validatedData = productSchema.parse(req.body);
@@ -82,6 +94,14 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
 
+  const { token } = req.cookies;
+
+  if (!token) {
+    console.error("Token not found in cookies");
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
   // Validar que el ID es un ObjectId válido
   if (!mongoose.Types.ObjectId.isValid(id)) {
     res.status(400).json({ message: "Invalid ID" });
@@ -111,6 +131,14 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
 // Eliminar un producto
 export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
+
+  const { token } = req.cookies;
+
+  if (!token) {
+    console.error("Token not found in cookies");
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
 
   // Validar que el ID es un ObjectId válido
   if (!mongoose.Types.ObjectId.isValid(id)) {

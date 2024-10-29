@@ -9,7 +9,6 @@ interface CustomJwtPayload extends JwtPayload {
 
 export const authRequired = (req: Request, res: Response, next: NextFunction): void => {
   const { token } = req.cookies;
-
   if (!token) {
     console.error("Token not found in cookies");
     res.status(401).json({ message: "Unauthorized" });
