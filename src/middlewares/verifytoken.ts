@@ -7,8 +7,9 @@ interface CustomRequest extends Request {
 }
 
 export const verifyToken = (req: CustomRequest, res: Response, next: NextFunction): void => {
-  const token = req.cookies.token; // Obtener el token de las cookies
-
+  const token = req.cookies.token || req.headers.authorization?.split(' ')[1]; // Obtener el token de las cookies o del encabezado
+  console.log('token', token);
+  
   if (!token) {
     res.status(401).json({ message: 'No token provided' });
     return; // Añadir return para detener la ejecución del middleware
