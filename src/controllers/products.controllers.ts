@@ -39,8 +39,13 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
   }
 };
 
+interface UserReq {
+  user?: { id: string };
+}
+
 // Crear un nuevo producto
-export const createProduct = async (req: Request, res: Response): Promise<void> => {
+// Crear un nuevo producto
+export const createProduct = async (req: Request & UserReq, res: Response): Promise<void> => {
   try {
     // Validar los datos de entrada
     const validatedData = productSchema.parse(req.body);
@@ -53,13 +58,14 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    // Crear el producto
+    // Crear el producto con el ID del usuario autenticado
     const newProduct = new Product({
       name,
       description,
       price,
       category,
       image,
+      createdBy: req.user?.id, // Aquí se utiliza el ID del usuario autenticado
     });
     const savedProduct = await newProduct.save();
 
@@ -79,7 +85,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 };
 
 // Actualizar un producto existente
-export const updateProduct = async (req: Request, res: Response): Promise<void> => {
+export const updateProduct = async (req: Request & UserReq, res: Response): Promise<void> => {
   const { id } = req.params;
 
   // Validar que el ID es un ObjectId válido
@@ -91,7 +97,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
   try {
     // Validar los datos con Zod
     const validatedData = productSchema.parse(req.body);
-    
+
     const product = await Product.findByIdAndUpdate(id, validatedData, { new: true });
     if (!product) {
       res.status(404).json({ message: "Product not found" });
@@ -109,7 +115,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
 };
 
 // Eliminar un producto
-export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
+export const deleteProduct = async (req: Request & UserReq, res: Response): Promise<void> => {
   const { id } = req.params;
 
   // Validar que el ID es un ObjectId válido

@@ -17,8 +17,8 @@ export const authRequired = (req: Request, res: Response, next: NextFunction): v
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
-    req.user = decoded;
+    const user = jwt.verify(token, JWT_SECRET as string) as CustomJwtPayload;
+    req.user = user;
     next();
   } catch (err) {
     console.error("Error verifying token:", err);
