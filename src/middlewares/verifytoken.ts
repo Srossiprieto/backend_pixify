@@ -10,7 +10,6 @@ export const verifyToken = (req: CustomRequest, res: Response, next: NextFunctio
   const token = req.cookies.token || req.headers.authorization?.split(' ')[1]; // Obtener el token de las cookies o del encabezado
   console.log('Token en backend:', token);
 
-  
   if (!token) {
     res.status(401).json({ message: 'No token provided' });
     return; // Añadir return para detener la ejecución del middleware
@@ -21,6 +20,8 @@ export const verifyToken = (req: CustomRequest, res: Response, next: NextFunctio
       res.status(401).json({ message: 'Unauthorized' });
       return; // Añadir return para detener la ejecución del middleware
     }
+
+    console.log("Decoded User:", user); // Depuración: Verificar el usuario decodificado
 
     if (user && typeof user === "object" && "id" in user) {
       req.user = user as { id: string };
