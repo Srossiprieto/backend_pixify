@@ -25,17 +25,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const token = await createAccessToken({ id: userSaved._id });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none', 
-      domain: process.env.COOKIE_DOMAIN || 'localhost', 
-      path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 7  
-    });
-    
     res.status(201).json({
       message: "User created successfully",
+      token,  // Enviar el token en la respuesta
       user: {
         id: userSaved._id,
         username: userSaved.username,
@@ -52,7 +44,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
-  try {
+ try {
     const userFound = await User.findOne({ email }).select("+password");
 
     if (!userFound) {
@@ -68,21 +60,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = await createAccessToken({ id: userFound._id });
 
-    // Configuración de cookies en producción en el servidor
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none', 
-      domain: process.env.COOKIE_DOMAIN || 'localhost', 
-      path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 7  
-    });
-    
-
-
     res.status(200).json({
       message: "User logged in successfully",
-      token, // Ensure the token is included in the response
+      token,  // Enviar el token en la respuesta
       user: {
         id: userFound._id,
         username: userFound.username,
