@@ -11,9 +11,8 @@ dotenv.config();
 
 const app = express();
 const corsOptions = {
-  origin: process.env.FRONT_URL,  // Permitir solo el dominio de tu frontend
+  origin: process.env.FRONT_URL, 
   credentials: true,
-  accessControlAllowCredentials: true,
 };
 
 app.use(cors(corsOptions));

@@ -7,7 +7,7 @@ interface CustomRequest extends Request {
 }
 
 export const verifyToken = (req: CustomRequest, res: Response, next: NextFunction): void => {
-  const token = req.cookies.token || req.headers.authorization?.split(' ')[1]; // Obtener el token de las cookies o del encabezado
+  const token = req.cookies.token; // Obtener el token de las cookies
   console.log('Token en backend:', token);
 
   if (!token) {
