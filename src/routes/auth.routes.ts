@@ -6,6 +6,6 @@ import { registerSchema, loginSchema } from '../schemas/auth.schema';
 const authRoutes = Router();
 
 authRoutes.post('/register', validateSchema(registerSchema) ,register);
-authRoutes.post('/login',validateSchema(loginSchema) ,login);
+authRoutes.post('/login', validateSchema(loginSchema) ,login);
 
 export default authRoutes;
