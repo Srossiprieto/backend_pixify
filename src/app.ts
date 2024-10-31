@@ -13,6 +13,7 @@ const app = express();
 const corsOptions = {
   origin: process.env.FRONT_URL,  // Permitir solo el dominio de tu frontend
   credentials: true,
+  accessControlAllowCredentials: true,
 };
 
 app.use(cors(corsOptions));
