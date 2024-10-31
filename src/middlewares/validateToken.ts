@@ -8,10 +8,10 @@ interface CustomJwtPayload extends JwtPayload {
 }
 
 export const authRequired = (req: Request, res: Response, next: NextFunction): void => {
-  const { token } = req.cookies;
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    console.error("Token not found in cookies");
+    console.error("Token not found in cookies or headers");
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
@@ -25,5 +25,4 @@ export const authRequired = (req: Request, res: Response, next: NextFunction): v
     res.status(401).json({ message: "Unauthorized" });
   }
 };
-
 
