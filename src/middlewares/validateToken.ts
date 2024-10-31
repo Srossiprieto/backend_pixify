@@ -9,7 +9,6 @@ interface CustomRequest extends Request {
 export const authRequired = (req: CustomRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1]; // Obtener el token del encabezado Authorization
-  console.log('Token en backend:', token);
 
   if (!token) {
     res.status(401).json({ message: 'No token provided' });
@@ -22,7 +21,6 @@ export const authRequired = (req: CustomRequest, res: Response, next: NextFuncti
       return; // Añadir return para detener la ejecución del middleware
     }
 
-    console.log("Decoded User:", user); // Depuración: Verificar el usuario decodificado
 
     if (user && typeof user === "object" && "id" in user) {
       req.user = user as { id: string };

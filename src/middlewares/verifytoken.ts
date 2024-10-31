@@ -8,7 +8,6 @@ interface CustomRequest extends Request {
 
 export const verifyToken = (req: CustomRequest, res: Response, next: NextFunction): void => {
   const token = req.cookies.token; // Obtener el token de las cookies
-  console.log('Token en backend:', token);
 
   if (!token) {
     res.status(401).json({ message: 'No token provided' });
@@ -21,7 +20,6 @@ export const verifyToken = (req: CustomRequest, res: Response, next: NextFunctio
       return; // Añadir return para detener la ejecución del middleware
     }
 
-    console.log("Decoded User:", user); // Depuración: Verificar el usuario decodificado
 
     if (user && typeof user === "object" && "id" in user) {
       req.user = user as { id: string };
