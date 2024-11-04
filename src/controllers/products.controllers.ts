@@ -148,3 +148,20 @@ export const deleteProduct = async (req: Request & UserReq, res: Response): Prom
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getProductsByCategory = async (req: Request, res: Response): Promise<void> => {
+  const { categoryId } = req.params;
+
+  if (!categoryId) {
+    res.status(400).json({ message: "Category ID is required" });
+    return;
+  }
+
+  try {
+    const products = await Product.find({ category: categoryId });
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
